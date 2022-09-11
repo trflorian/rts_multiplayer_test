@@ -1,20 +1,20 @@
-using Unity.Netcode;
+using Misc;
+using Services;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MainMenu
 {
     /// <summary>
     /// Manages network setup in main menu
     /// </summary>
-    public class MainMenuManager : NetworkBehaviour
+    public class MainMenuManager : MonoBehaviour
     {
-        public void OnClickStartHost()
-        {
-            NetworkManager.Singleton.StartHost();
-        }
-
-        public void OnClickStartClient()
-        {
-            NetworkManager.Singleton.StartClient();
+        public async void LoginAnonymously() {
+            using (new Load("Logging you in...")) {
+                await Authentication.Login();
+                SceneManager.LoadSceneAsync("LobbyScene");
+            }
         }
     }
 }
