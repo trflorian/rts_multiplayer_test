@@ -1,7 +1,5 @@
 using System;
-using FishNet;
-using FishNet.Connection;
-using FishNet.Object;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PlayerNames
@@ -9,18 +7,18 @@ namespace PlayerNames
     /// <summary>
     /// Controls list of player names
     /// </summary>
-    public class PlayerListUI : NetworkBehaviour
+    public class PlayerListUI : MonoBehaviour
     {
         [SerializeField] private GameObject playerListItemPrefab;
 
         private void Awake()
         {
-            PlayerNameTracker.OnNameChange += OnNameChanged;
+            // PlayerNameTracker.OnNameChange += OnNameChanged;
         }
 
         private void UpdatePlayerList()
         {
-            var playerList = PlayerNameTracker.GetPlayerNameList();
+            var playerList = new List<string>(); // PlayerNameTracker.GetPlayerNameList();
 
             for (int i = transform.childCount; i < playerList.Count; i++)
             {
@@ -40,9 +38,9 @@ namespace PlayerNames
             }
         }
 
-        private void OnNameChanged(NetworkConnection conn, string playerName)
-        {
-            UpdatePlayerList();
-        }
+        // private void OnNameChanged(NetworkConnection conn, string playerName)
+        // {
+        //     UpdatePlayerList();
+        // }
     }
 }
