@@ -2,6 +2,7 @@ using System;
 using FishNet;
 using FishNet.Managing;
 using FishNet.Managing.Scened;
+using FishNet.Object;
 using FishNet.Transporting;
 using FishNet.Utility;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace MainMenu
     /// <summary>
     /// Manages network setup in main menu
     /// </summary>
-    public class MainMenuManager : MonoBehaviour
+    public class MainMenuManager : NetworkBehaviour
     {
         private NetworkManager _networkManager;
 
