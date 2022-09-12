@@ -4,6 +4,7 @@ using LobbyScene;
 using Misc;
 using Services;
 using Unity.Netcode;
+using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -153,7 +154,7 @@ namespace Managers
 
         [ServerRpc(RequireOwnership = false)]
         private void SetReadyServerRpc(ulong playerId) {
-            _playersInLobby[playerId] = true;
+            _playersInLobby[playerId] = !_playersInLobby[playerId];
             PropagateToClients();
             UpdateInterface();
         }
@@ -190,6 +191,12 @@ namespace Managers
                 await MatchmakingService.LockLobby();
                 NetworkManager.Singleton.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
             }
+        }
+
+        public void ClickQuit()
+        {
+            AuthenticationService.Instance.SignOut();
+            SceneManager.LoadScene("MainMenuScene");
         }
 
         #endregion

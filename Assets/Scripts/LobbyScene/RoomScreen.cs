@@ -61,8 +61,8 @@ namespace LobbyScene
 
             foreach (var player in players) {
                 var currentPanel = _playerPanels.FirstOrDefault(p => p.PlayerId == player.Key);
-                if (currentPanel != null) {
-                    if (player.Value) currentPanel.SetReady();
+                if (currentPanel != null) { 
+                    currentPanel.SetReady(player.Value);
                 }
                 else {
                     var panel = Instantiate(_playerPanelPrefab, _playerPanelParent);

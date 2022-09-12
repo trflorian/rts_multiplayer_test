@@ -1,3 +1,4 @@
+using Services;
 using UnityEngine;
 
 namespace Misc
@@ -8,9 +9,8 @@ namespace Misc
     public static class Bootstrapper {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize() {
-            // MatchmakingService.ResetStatics();
+            MatchmakingService.ResetStatics();
             Object.DontDestroyOnLoad(Object.Instantiate(Resources.Load("CanvasUtilities")));
-            //Addressables.InstantiateAsync();
         }
     }
 }
