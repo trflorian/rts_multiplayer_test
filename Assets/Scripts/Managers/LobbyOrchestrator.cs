@@ -96,10 +96,6 @@ namespace Managers
                 });
                 UpdateInterface();
             }
-            else
-            {
-                SetPlayerNameServerRpc(NetworkManager.Singleton.LocalClientId, PlayerPrefs.GetString(PlayerNameInputField.PlayerNamePrefKey));
-            }
 
             // Client uses this in case host destroys the lobby
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
@@ -118,6 +114,9 @@ namespace Managers
                     PlayerName = $"Player {playerId}",
                     IsReady = false
                 });
+
+                // request player name
+                RequestPlayerDataClientRpc(playerId);
             }
 
             PropagateToClients();
@@ -129,6 +128,14 @@ namespace Managers
             foreach (var player in _playersInLobby) UpdatePlayerClientRpc(player.Key, player.Value);
         }
 
+        [ClientRpc]
+        private void RequestPlayerDataClientRpc(ulong clientId)
+        {
+            if (NetworkManager.LocalClient.ClientId != clientId) return;
+            
+            SetPlayerNameServerRpc(NetworkManager.Singleton.LocalClientId, PlayerPrefs.GetString(PlayerNameInputField.PlayerNamePrefKey));
+        }
+        
         [ClientRpc]
         private void UpdatePlayerClientRpc(ulong clientId, PlayerData playerData) {
             if (IsServer) return;
