@@ -17,14 +17,14 @@ namespace Managers
     /// but the transport and RPC logic remains here. It's possible we could pull
     /// </summary>
     public class LobbyOrchestrator : NetworkBehaviour {
-        [SerializeField] private MainLobbyScreen _mainLobbyScreen;
-        [SerializeField] private CreateLobbyScreen _createScreen;
-        [SerializeField] private RoomScreen _roomScreen;
+        [SerializeField] private MainLobbyScreen mainLobbyScreen;
+        [SerializeField] private CreateLobbyScreen createScreen;
+        [SerializeField] private RoomScreen roomScreen;
 
         private void Start() {
-            _mainLobbyScreen.gameObject.SetActive(true);
-            _createScreen.gameObject.SetActive(false);
-            _roomScreen.gameObject.SetActive(false);
+            mainLobbyScreen.gameObject.SetActive(true);
+            createScreen.gameObject.SetActive(false);
+            roomScreen.gameObject.SetActive(false);
 
             CreateLobbyScreen.LobbyCreated += CreateLobby;
             LobbyRoomPanel.LobbySelected += OnLobbySelected;
@@ -41,8 +41,8 @@ namespace Managers
                 try {
                     await MatchmakingService.JoinLobbyWithAllocation(lobby.Id);
 
-                    _mainLobbyScreen.gameObject.SetActive(false);
-                    _roomScreen.gameObject.SetActive(true);
+                    mainLobbyScreen.gameObject.SetActive(false);
+                    roomScreen.gameObject.SetActive(true);
 
                     NetworkManager.Singleton.StartClient();
                 }
@@ -64,8 +64,8 @@ namespace Managers
                 try {
                     await MatchmakingService.CreateLobbyWithAllocation(data);
 
-                    _createScreen.gameObject.SetActive(false);
-                    _roomScreen.gameObject.SetActive(true);
+                    createScreen.gameObject.SetActive(false);
+                    roomScreen.gameObject.SetActive(true);
 
                     // Starting the host immediately will keep the relay server alive
                     NetworkManager.Singleton.StartHost();
@@ -102,7 +102,7 @@ namespace Managers
             if (!IsServer) return;
 
             // Add locally
-            if (!_playersInLobby.ContainsKey(playerId)) _playersInLobby.Add(playerId, false);
+            if (!_playersInLobby.ContainsKey(playerId) && playerId != NetworkManager.Singleton.LocalClientId) _playersInLobby.Add(playerId, false);
 
             PropagateToClients();
 
@@ -134,8 +134,8 @@ namespace Managers
             }
             else {
                 // This happens when the host disconnects the lobby
-                _roomScreen.gameObject.SetActive(false);
-                _mainLobbyScreen.gameObject.SetActive(true);
+                roomScreen.gameObject.SetActive(false);
+                mainLobbyScreen.gameObject.SetActive(true);
                 OnLobbyLeft();
             }
         }

@@ -5455,9 +5455,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 816f5012cdf7c78439342fb7d4669aab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mainLobbyScreen: {fileID: 1125212480}
-  _createScreen: {fileID: 363650589}
-  _roomScreen: {fileID: 1244102543}
+  mainLobbyScreen: {fileID: 1125212480}
+  createScreen: {fileID: 363650589}
+  roomScreen: {fileID: 1244102543}
 --- !u!1 &1882189139
 GameObject:
   m_ObjectHideFlags: 0

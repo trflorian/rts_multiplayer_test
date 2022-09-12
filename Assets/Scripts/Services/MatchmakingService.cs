@@ -58,6 +58,9 @@ namespace Services
             // Create a relay allocation and generate a join code to share with the lobby
             var a = await RelayService.Instance.CreateAllocationAsync(data.MaxPlayers);
             var joinCode = await RelayService.Instance.GetJoinCodeAsync(a.AllocationId);
+            
+            // Debug.Log("Allocation: " + a);
+            // Debug.Log("JoinCode: " + joinCode);
 
             // Create a lobby, adding the relay join code to the lobby data
             var options = new CreateLobbyOptions {
