@@ -125,7 +125,7 @@ namespace Managers
         }
 
         private void PropagateToClients() {
-            foreach (var player in _playersInLobby) UpdatePlayerClientRpc(player.Key, player.Value);
+            foreach (var (playerId, playerData) in _playersInLobby) UpdatePlayerClientRpc(playerId, playerData);
         }
 
         [ClientRpc]
