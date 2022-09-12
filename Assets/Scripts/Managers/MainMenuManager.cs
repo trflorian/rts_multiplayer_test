@@ -3,7 +3,7 @@ using Services;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace MainMenu
+namespace Managers
 {
     /// <summary>
     /// Manages network setup in main menu

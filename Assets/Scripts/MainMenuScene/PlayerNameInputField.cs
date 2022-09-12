@@ -1,10 +1,8 @@
-using System;
-using PlayerNames;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace MainMenu
+namespace MainMenuScene
 {
     /// <summary>
     /// Input field for entering the player name

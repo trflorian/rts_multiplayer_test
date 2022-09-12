@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace MainMenu
+namespace MainMenuScene
 {
     /// <summary>
     /// Loads the game scene on click
