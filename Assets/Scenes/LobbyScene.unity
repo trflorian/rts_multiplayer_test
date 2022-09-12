@@ -3820,12 +3820,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33b72d7bf7d7a064690f15f1cdeafce0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerPanelPrefab: {fileID: 1630202876, guid: a2de6ece38eddc146934f8486c9036a6,
+  playerPanelPrefab: {fileID: 1630202876, guid: a2de6ece38eddc146934f8486c9036a6,
     type: 3}
-  _playerPanelParent: {fileID: 201004639}
-  _waitingText: {fileID: 1896643063}
-  _startButton: {fileID: 216546106}
-  _readyButton: {fileID: 1800809618}
+  playerPanelParent: {fileID: 201004639}
+  waitingText: {fileID: 1896643063}
+  startButton: {fileID: 216546106}
+  readyButton: {fileID: 1800809618}
 --- !u!1 &1244730658
 GameObject:
   m_ObjectHideFlags: 0

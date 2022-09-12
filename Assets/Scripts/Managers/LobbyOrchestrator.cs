@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using LobbyScene;
+using MainMenuScene;
 using Misc;
 using Services;
 using Unity.Netcode;
@@ -81,15 +82,23 @@ namespace Managers
 
         #region Room
 
-        private readonly Dictionary<ulong, bool> _playersInLobby = new();
-        public static event Action<Dictionary<ulong, bool>> LobbyPlayersUpdated;
+        private readonly Dictionary<ulong, PlayerData> _playersInLobby = new();
+        public static event Action<Dictionary<ulong, PlayerData>> LobbyPlayersUpdated;
         private float _nextLobbyUpdate;
 
         public override void OnNetworkSpawn() {
             if (IsServer) {
                 NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
-                _playersInLobby.Add(NetworkManager.Singleton.LocalClientId, false);
+                _playersInLobby.Add(NetworkManager.Singleton.LocalClientId, new PlayerData
+                {
+                    IsReady = false,
+                    PlayerName = PlayerPrefs.GetString(PlayerNameInputField.PlayerNamePrefKey)
+                });
                 UpdateInterface();
+            }
+            else
+            {
+                SetPlayerNameServerRpc(NetworkManager.Singleton.LocalClientId, PlayerPrefs.GetString(PlayerNameInputField.PlayerNamePrefKey));
             }
 
             // Client uses this in case host destroys the lobby
@@ -102,7 +111,14 @@ namespace Managers
             if (!IsServer) return;
 
             // Add locally
-            if (!_playersInLobby.ContainsKey(playerId) && playerId != NetworkManager.Singleton.LocalClientId) _playersInLobby.Add(playerId, false);
+            if (!_playersInLobby.ContainsKey(playerId) && playerId != NetworkManager.Singleton.LocalClientId)
+            {
+                _playersInLobby.Add(playerId, new PlayerData
+                {
+                    PlayerName = $"Player {playerId}",
+                    IsReady = false
+                });
+            }
 
             PropagateToClients();
 
@@ -114,11 +130,11 @@ namespace Managers
         }
 
         [ClientRpc]
-        private void UpdatePlayerClientRpc(ulong clientId, bool isReady) {
+        private void UpdatePlayerClientRpc(ulong clientId, PlayerData playerData) {
             if (IsServer) return;
 
-            if (!_playersInLobby.ContainsKey(clientId)) _playersInLobby.Add(clientId, isReady);
-            else _playersInLobby[clientId] = isReady;
+            if (!_playersInLobby.ContainsKey(clientId)) _playersInLobby.Add(clientId, playerData);
+            else _playersInLobby[clientId] = playerData;
             UpdateInterface();
         }
 
@@ -154,7 +170,18 @@ namespace Managers
 
         [ServerRpc(RequireOwnership = false)]
         private void SetReadyServerRpc(ulong playerId) {
-            _playersInLobby[playerId] = !_playersInLobby[playerId];
+            var pd = _playersInLobby[playerId];
+            pd.IsReady = !pd.IsReady; 
+            _playersInLobby[playerId] = pd;
+            PropagateToClients();
+            UpdateInterface();
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void SetPlayerNameServerRpc(ulong playerId, string playerName) {
+            var pd = _playersInLobby[playerId];
+            pd.PlayerName = playerName;
+            _playersInLobby[playerId] = pd;
             PropagateToClients();
             UpdateInterface();
         }
@@ -205,5 +232,17 @@ namespace Managers
     public struct LobbyData {
         public string Name;
         public int MaxPlayers;
+    }
+
+    public struct PlayerData : INetworkSerializable
+    {
+        public string PlayerName;
+        public bool IsReady;
+        
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            serializer.SerializeValue(ref PlayerName);
+            serializer.SerializeValue(ref IsReady);
+        }
     }
 }

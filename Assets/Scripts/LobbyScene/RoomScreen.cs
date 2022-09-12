@@ -15,10 +15,10 @@ namespace LobbyScene
     ///     on the network scene object "NetworkLobby"
     /// </summary>
     public class RoomScreen : MonoBehaviour {
-        [SerializeField] private LobbyPlayerPanel _playerPanelPrefab;
-        [SerializeField] private Transform _playerPanelParent;
-        [SerializeField] private TMP_Text _waitingText;
-        [SerializeField] private GameObject _startButton, _readyButton;
+        [SerializeField] private LobbyPlayerPanel playerPanelPrefab;
+        [SerializeField] private Transform playerPanelParent;
+        [SerializeField] private TMP_Text waitingText;
+        [SerializeField] private GameObject startButton, readyButton;
 
         private readonly List<LobbyPlayerPanel> _playerPanels = new();
         private bool _allReady;
@@ -27,13 +27,13 @@ namespace LobbyScene
         public static event Action StartPressed; 
 
         private void OnEnable() {
-            foreach (Transform child in _playerPanelParent) Destroy(child.gameObject);
+            foreach (Transform child in playerPanelParent) Destroy(child.gameObject);
             _playerPanels.Clear();
 
             LobbyOrchestrator.LobbyPlayersUpdated += NetworkLobbyPlayersUpdated;
             MatchmakingService.CurrentLobbyRefreshed += OnCurrentLobbyRefreshed;
-            _startButton.SetActive(false);
-            _readyButton.SetActive(false);
+            startButton.SetActive(false);
+            readyButton.SetActive(false);
 
             _ready = false;
         }
@@ -49,7 +49,7 @@ namespace LobbyScene
             LobbyLeft?.Invoke();
         }
 
-        private void NetworkLobbyPlayersUpdated(Dictionary<ulong, bool> players) {
+        private void NetworkLobbyPlayersUpdated(Dictionary<ulong, PlayerData> players) {
             var allActivePlayerIds = players.Keys;
 
             // Remove all inactive panels
@@ -62,25 +62,25 @@ namespace LobbyScene
             foreach (var player in players) {
                 var currentPanel = _playerPanels.FirstOrDefault(p => p.PlayerId == player.Key);
                 if (currentPanel != null) { 
-                    currentPanel.SetReady(player.Value);
+                    currentPanel.SetPlayerData(player.Value);
                 }
                 else {
-                    var panel = Instantiate(_playerPanelPrefab, _playerPanelParent);
-                    panel.Init(player.Key);
+                    var panel = Instantiate(playerPanelPrefab, playerPanelParent);
+                    panel.Init(player.Key, player.Value);
                     _playerPanels.Add(panel);
                 }
             }
 
-            _startButton.SetActive(NetworkManager.Singleton.IsHost && players.All(p => p.Value));
-            _readyButton.SetActive(!_ready);
+            startButton.SetActive(NetworkManager.Singleton.IsHost && players.All(p => p.Value.IsReady));
+            readyButton.SetActive(!_ready);
         }
 
         private void OnCurrentLobbyRefreshed(Lobby lobby) {
-            _waitingText.text = $"Waiting on players... {lobby.Players.Count}/{lobby.MaxPlayers}";
+            waitingText.text = $"Waiting on players... {lobby.Players.Count}/{lobby.MaxPlayers}";
         }
 
         public void OnReadyClicked() {
-            _readyButton.SetActive(false);
+            readyButton.SetActive(false);
             _ready = true;
         }
 

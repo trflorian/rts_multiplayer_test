@@ -1,3 +1,4 @@
+using Managers;
 using TMPro;
 using UnityEngine;
 
@@ -8,14 +9,17 @@ namespace LobbyScene
 
         public ulong PlayerId { get; private set; }
 
-        public void Init(ulong playerId) {
+        public void Init(ulong playerId, PlayerData playerData) {
             PlayerId = playerId;
-            nameText.text = $"Player {playerId}";
+            
+            SetPlayerData(playerData);
         }
 
-        public void SetReady(bool isReady) {
-            statusText.text = isReady ? "Ready" : "Not Ready";
-            statusText.color = isReady ? Color.green : Color.white;
+        public void SetPlayerData(PlayerData playerData)
+        {
+            nameText.text = playerData.PlayerName;
+            statusText.text = playerData.IsReady ? "Ready" : "Not Ready";
+            statusText.color = playerData.IsReady ? Color.green : Color.white;
         }
     }
 }
